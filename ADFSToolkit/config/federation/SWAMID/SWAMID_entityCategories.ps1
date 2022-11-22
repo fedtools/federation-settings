@@ -1,14 +1,24 @@
 function Import-ADFSTkIssuanceTransformRuleCategoriesFromFederation {
-param (
-[Parameter(Mandatory=$false,
-                   ValueFromPipelineByPropertyName=$true,
-                   Position=0)]
-    $RequestedAttributes
-)
+    param (
+        [Parameter(Mandatory = $false,
+            ValueFromPipelineByPropertyName = $true,
+            Position = 0)]
+        $RequestedAttributes,
+        [Parameter(Mandatory = $false,
+            ValueFromPipelineByPropertyName = $true,
+            Position = 1)]
+        $SubjectIDReq
+    )
+
+    if ($SubjectIDReq -eq 'any') {
+        $SubjectIDReq = 'pairwise-id'
+    } 
 
     ################################
     ### SWAMID Entity Categories ###
     ################################
+
+    # v1.2
 
     $IssuanceTransformRuleCategories = @{}
 
@@ -31,7 +41,7 @@ param (
     $TransformRules.co = $Global:ADFSTkAllTransformRules.co
     $TransformRules.schacHomeOrganization = $Global:ADFSTkAllTransformRules.schacHomeOrganization
 
-    $IssuanceTransformRuleCategories.Add("http://www.swamid.se/category/research-and-education",$TransformRules)
+    $IssuanceTransformRuleCategories.Add("http://www.swamid.se/category/research-and-education", $TransformRules)
 
     ### SWAMID Entity Category SFS 1993:1153
 
@@ -40,14 +50,13 @@ param (
     $TransformRules.norEduPersonNIN = $Global:ADFSTkAllTransformRules.norEduPersonNIN
     $TransformRules.eduPersonAssurance = $Global:ADFSTkAllTransformRules.eduPersonAssurance
 
-    $IssuanceTransformRuleCategories.Add("http://www.swamid.se/category/sfs-1993-1153",$TransformRules)
+    $IssuanceTransformRuleCategories.Add("http://www.swamid.se/category/sfs-1993-1153", $TransformRules)
 
     ### GEANT Dataprotection Code of Conduct
     
     $TransformRules = [Ordered]@{}
 
-    if ($RequestedAttributes.Count -gt 0)
-    {
+    if ($RequestedAttributes.Count -gt 0) {
         if ($RequestedAttributes.ContainsKey("urn:oid:2.5.4.6")) {
             $TransformRules.c = $Global:ADFSTkAllTransformRules.c
         }
@@ -79,7 +88,10 @@ param (
             $TransformRules.eduPersonScopedAffiliation = $Global:ADFSTkAllTransformRules.eduPersonScopedAffiliation
         }
         if ($RequestedAttributes.ContainsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.10")) { 
-            $TransformRules.eduPersonTargetedID = $Global:ADFSTkAllTransformRules.eduPersonTargetedID
+            #eduPersonTargetedID should only be released if eduPersonPrincipalName i ressignable
+            if (![string]::IsNullOrEmpty($Settings.configuration.eduPersonPrincipalNameRessignable) -and $Settings.configuration.eduPersonPrincipalNameRessignable.ToLower() -eq "true") {
+                $TransformRules.eduPersonTargetedID = $Global:ADFSTkAllTransformRules.eduPersonTargetedID
+            }
         }
         if ($RequestedAttributes.ContainsKey("urn:oid:1.3.6.1.4.1.5923.1.1.1.13")) { 
             $TransformRules.eduPersonUniqueID = $Global:ADFSTkAllTransformRules.eduPersonUniqueID
@@ -122,8 +134,54 @@ param (
         }
     }
 
-    $IssuanceTransformRuleCategories.Add("http://www.geant.net/uri/dataprotection-code-of-conduct/v1",$TransformRules)
+    #region Add subject-id/pairwise-id
+    switch ($SubjectIDReq) {
+        'pairwise-id' { 
+            $TransformRules.pairwiseID = $Global:ADFSTkAllTransformRules.pairwiseID 
+        }
+        'subject-id' { 
+            $TransformRules.subjectID = $Global:ADFSTkAllTransformRules.subjectID 
+        }
+        'none' {  }
+        Default {}
+    }
+    #endregion
 
+    $IssuanceTransformRuleCategories.Add("http://www.geant.net/uri/dataprotection-code-of-conduct/v1", $TransformRules)
+    $IssuanceTransformRuleCategories.Add("https://refeds.org/category/code-of-conduct/v2", $TransformRules)
+
+    ###
+
+    #European Student Identifier Entity Category
+    $TransformRules = [Ordered]@{}
+    
+    $TransformRules.schacPersonalUniqueCode = [PSCustomObject]@{
+        Rule           = @"
+        @RuleName = "compose schacPersonalUniqueCode for ESI"
+        c:[Type == "urn:schac:personalUniqueCode", Value =~ "^urn:schac:personalUniqueCode:int:esi:"]
+         => issue(Type = "urn:oid:1.3.6.1.4.1.25178.1.2.14",
+         Value = c.Value,
+         Properties["http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/attributename"] = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+"@
+        Attribute      = "urn:schac:personalUniqueCode"
+        AttributeGroup = "ID's"
+    }
+
+    #     $TransformRules.schacPersonalUniqueCode = [PSCustomObject]@{
+    #         Rule=@"
+    #         @RuleName = "compose schacPersonalUniqueCode for ESI"
+    #         c:[Type == "urn:schac:personalUniqueCode"]
+    #          => issue(Type = "urn:oid:1.3.6.1.4.1.25178.1.2.14",
+    #          Value = "urn:schac:personalUniqueCode:int:esi:ladok.se:externtstudentuid-" + c.Value,
+    #          Properties["http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/attributename"] = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+    # "@
+    #         Attribute="urn:schac:personalUniqueCode"
+    #         AttributeGroup="ID's"
+    #     }
+
+    $IssuanceTransformRuleCategories.Add("https://myacademicid.org/entity-categories/esi", $TransformRules)
+
+    ###
 
     $IssuanceTransformRuleCategories
 }
