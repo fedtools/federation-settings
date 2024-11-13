@@ -18,7 +18,7 @@ function Import-ADFSTkIssuanceTransformRuleCategoriesFromFederation {
     ### SWAMID Entity Categories ###
     ################################
 
-    # v1.2
+    # v1.3
 
     $IssuanceTransformRuleCategories = @{}
 
@@ -170,7 +170,7 @@ function Import-ADFSTkIssuanceTransformRuleCategoriesFromFederation {
     #     $TransformRules.schacPersonalUniqueCode = [PSCustomObject]@{
     #         Rule=@"
     #         @RuleName = "compose schacPersonalUniqueCode for ESI"
-    #         c:[Type == "urn:schac:personalUniqueCode"]
+    #         c:[Type == "urn:schac:personalUniqueCode", Value != ""]
     #          => issue(Type = "urn:oid:1.3.6.1.4.1.25178.1.2.14",
     #          Value = "urn:schac:personalUniqueCode:int:esi:ladok.se:externtstudentuid-" + c.Value,
     #          Properties["http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/attributename"] = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
