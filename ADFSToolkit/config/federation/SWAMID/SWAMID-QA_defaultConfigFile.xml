@@ -16,7 +16,7 @@
     </Logging>
 
     <metadataURL>https://mds.swamid.se/qa/md/swamid-sp.xml</metadataURL>
-    <signCertFingerprint>A6785A37C9C90C25AD5F1F6922EF767BC97867673AAF4F8BEAA1A76DA3A8E585</signCertFingerprint>
+    <signCertFingerprint>1EBC8E620BC93CEBC6E07F9E34B8A19FEAA930A19EB531B9448B0FCC3BD917D2</signCertFingerprint>
     <claimsProviders>
         <claimsProvider>Active Directory</claimsProvider>
     </claimsProviders>
