@@ -5,7 +5,7 @@
     <MetadataCacheFile>metadata.cached.xml</MetadataCacheFile>
     <LocalRelyingPartyFile>get-ADFSTkLocalManualSPSettings.ps1</LocalRelyingPartyFile>
 
-    <MetadataPrefix>SwamidTest</MetadataPrefix>
+    <MetadataPrefix>SwamidQA</MetadataPrefix>
     <MetadataPrefixSeparator>:</MetadataPrefixSeparator>
 
     <eduPersonPrincipalNameRessignable>false</eduPersonPrincipalNameRessignable>
@@ -15,7 +15,7 @@
         <Source>Import-ADFSTkMetadata</Source>
     </Logging>
 
-    <metadataURL>https://mds.swamid.se/md/swamid-testing-1.0.xml</metadataURL>
+    <metadataURL>https://mds.swamid.se/qa/md/swamid-sp.xml</metadataURL>
     <signCertFingerprint>A6785A37C9C90C25AD5F1F6922EF767BC97867673AAF4F8BEAA1A76DA3A8E585</signCertFingerprint>
     <claimsProviders>
         <claimsProvider>Active Directory</claimsProvider>
@@ -55,6 +55,7 @@
         <attribute type="http://schemas.xmlsoap.org/claims/CommonName" store="Active Directory" name="cn" />
         <attribute type="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" store="Active Directory" name="name" />
         <attribute type="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress" store="Active Directory" name="mail" />
+        <attribute type="mailLocalAddress" store="Active Directory" name="mail" />
 
         <!-- eduPersonAffilation and eduPersonScopedAffiliation settings
                 Scenario A. Static assignement with all active users declared 'member' (default)
