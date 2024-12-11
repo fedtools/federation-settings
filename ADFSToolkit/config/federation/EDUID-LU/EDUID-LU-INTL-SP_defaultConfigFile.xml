@@ -13,7 +13,7 @@
 		<Source>Import-ADFSTkMetadata</Source>
 	</Logging>   
 	<metadataURL>https://eduid.lu/metadata/edugain-sp.xml</metadataURL>
-    <signCertFingerprint>B8EC5AEFEA01767EF08DC26600769EB328910B97</signCertFingerprint>
+    <signCertFingerprint>5514E73B917DE18CFDA293297EBA737713B98A3418BF029E3EAF300916CDDFFA</signCertFingerprint>
 	<claimsProviders>
 		<claimsProvider>Active Directory</claimsProvider>
 	</claimsProviders>
