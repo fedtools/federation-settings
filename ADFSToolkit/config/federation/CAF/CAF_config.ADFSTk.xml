@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <ConfigVersion>1.1</ConfigVersion>
+  <ModuleVersion />
+  <OutputLanguage>en-US</OutputLanguage>
+  <Fticks>
+    <Server>logger.canarie.ca</Server>
+    <Salt />
+  </Fticks>
+  <FederationConfig>
+    <Federation>
+      <FederationName>CAF</FederationName>
+      <SigningThumbprint />
+      <URL>https://github.com/fedtools/federation-settings/archive/refs/heads/main.zip</URL>
+    </Federation>
+  </FederationConfig>
+  <ConfigFiles />
+</Configuration>
